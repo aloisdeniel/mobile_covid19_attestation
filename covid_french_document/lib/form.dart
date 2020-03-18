@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,6 +14,7 @@ class DocumentForm extends StatefulWidget {
 
 class _FormState extends State<DocumentForm> {
   SharedPreferences _preferences;
+  Completer<void> _initializer;
   String _name = "";
   String _address = "";
   String _location = "";
@@ -21,8 +24,8 @@ class _FormState extends State<DocumentForm> {
 
   @override
   void initState() {
+    _initializer = Completer<void>();
     loadFromPreferences();
-
     super.initState();
   }
 
@@ -46,11 +49,12 @@ class _FormState extends State<DocumentForm> {
         return Point(Offset(point[0], point[1]), PointType.values[type]);
       }).toList();
     });
+    _initializer.complete();
   }
 
   void setStateWithSave(void update(SharedPreferences preferences)) async {
-    final preferences = _preferences ?? await SharedPreferences.getInstance();
-    this.setState(() => update(preferences));
+    await _initializer.future;
+    this.setState(() => update(_preferences));
   }
 
   @override
