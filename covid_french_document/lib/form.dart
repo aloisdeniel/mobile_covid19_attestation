@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:signature/signature.dart';
 
 import 'document.dart';
+import 'model.dart';
 
 class DocumentForm extends StatefulWidget {
   @override
@@ -128,7 +129,8 @@ class _FormState extends State<DocumentForm> {
               pref.setStringList(
                 'signature',
                 v
-                    .map((x) => '${x.type.index}/${x.offset.dx}/${x.offset.dy}')
+                    .map((x) =>
+                        '${x.type.index}/${x.offset.dx.toStringAsFixed(2)}/${x.offset.dy.toStringAsFixed(2)}')
                     .toList(),
               );
               this._signature = v;
@@ -248,7 +250,9 @@ class _DateTimePickerState extends State<DateTimePicker> {
   void didUpdateWidget(DateTimePicker oldWidget) {
     if (oldWidget.value != widget.value) {
       current = widget.value;
-      this._textEditingController.text = current.toString();
+      this._textEditingController.text = (current == null)
+          ? ""
+          : "${current.day}/${current.month}/${current.year}";
     }
     super.didUpdateWidget(oldWidget);
   }
@@ -351,8 +355,6 @@ class ReasonPicker extends StatefulWidget {
 class _ReasonPickerState extends State<ReasonPicker> {
   String _label(DerogatoryMovementReason reason) {
     switch (reason) {
-      case DerogatoryMovementReason.work:
-        return 'Trajet travail';
       case DerogatoryMovementReason.shopping:
         return 'Magasins';
       case DerogatoryMovementReason.health:
@@ -361,6 +363,8 @@ class _ReasonPickerState extends State<ReasonPicker> {
         return 'Familial';
       case DerogatoryMovementReason.activity:
         return 'Activité proche';
+      default:
+        return 'Trajet travail';
     }
   }
 
@@ -377,12 +381,4 @@ class _ReasonPickerState extends State<ReasonPicker> {
       onChanged: widget.onChanged,
     );
   }
-}
-
-enum DerogatoryMovementReason {
-  work,
-  shopping,
-  health,
-  family,
-  activity,
 }

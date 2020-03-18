@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:signature/signature.dart';
 
-import 'form.dart';
+import 'model.dart';
 
 class Document extends StatelessWidget {
   final String name;
